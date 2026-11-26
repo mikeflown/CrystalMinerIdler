@@ -34,8 +34,8 @@ public class UIBootstrap : MonoBehaviour
             if (child.name != "FloatingTextManager")
                 child.gameObject.SetActive(false);
 
-        var startPanel = CreatePanel("StartPanel", new Color(0.1f, 0.1f, 0.15f, 0.95f));
-        CreateText(startPanel.transform, "CRYSTAL MINER", 48, new Vector2(0, 80));
+        var startPanel = CreatePanel("StartPanel", new Color(0.08f, 0.1f, 0.18f, 0.97f));
+        CreateText(startPanel.transform, "CRYSTAL MINER", 52, new Vector2(0, 80));
         var playBtn = CreateButton(startPanel.transform, "PLAY", new Vector2(0, -40));
         playBtn.onClick.AddListener(() =>
         {
@@ -54,9 +54,9 @@ public class UIBootstrap : MonoBehaviour
         if (holdProgressBar != null)
             holdProgressBar.fillAmount = t;
 
-        float pulse = Mathf.Lerp(1f, 4f, t);
+        float pulse = Mathf.Lerp(1f, 5f, t);
         float flash = Mathf.PingPong(Time.unscaledTime * pulse, 1f);
-        resetButtonImage.color = Color.Lerp(new Color(0.6f, 0.1f, 0.1f), Color.red, flash);
+        resetButtonImage.color = Color.Lerp(new Color(0.5f, 0.05f, 0.05f), Color.red, flash);
 
         if (holdTimer >= HoldDuration)
         {
@@ -64,7 +64,7 @@ public class UIBootstrap : MonoBehaviour
             isHoldingReset = false;
             holdTimer = 0;
             if (holdProgressBar) holdProgressBar.fillAmount = 0;
-            resetButtonImage.color = new Color(0.6f, 0.1f, 0.1f);
+            resetButtonImage.color = new Color(0.5f, 0.05f, 0.05f);
         }
     }
 
@@ -92,12 +92,11 @@ public class UIBootstrap : MonoBehaviour
     {
         EnsureGameManager();
 
-        var panel = CreatePanel("Gameplay", new Color(0, 0, 0, 0.3f));
+        var panel = CreatePanel("Gameplay", new Color(0.05f, 0.07f, 0.12f, 0.4f));
 
-        // Crystal (центр)
-        var crystal = CreateButton(panel.transform, "CRYSTAL", new Vector2(-200, 0));
-        crystal.GetComponent<RectTransform>().sizeDelta = new Vector2(160, 160);
-        crystal.GetComponent<Image>().color = new Color(0.2f, 0.6f, 1f);
+        var crystal = CreateButton(panel.transform, "CRYSTAL", new Vector2(-220, 0));
+        crystal.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 170);
+        crystal.GetComponent<Image>().color = new Color(0.25f, 0.65f, 1f);
 
         var clickEffect = crystal.gameObject.AddComponent<CrystalClickEffect>();
         crystal.gameObject.AddComponent<UpgradeVisuals>();
@@ -115,26 +114,19 @@ public class UIBootstrap : MonoBehaviour
             RefreshUI();
         });
 
-        crystalsText = CreateText(panel.transform, "Crystals: 0", 36, new Vector2(-200, 220));
-        cpsText = CreateText(panel.transform, "CPS: 0", 28, new Vector2(-200, 170));
+        crystalsText = CreateText(panel.transform, "Crystals: 0", 36, new Vector2(-220, 220));
+        cpsText = CreateText(panel.transform, "CPS: 0", 28, new Vector2(-220, 165));
 
-        // Апгрейды справа
         CreateUpgradeButtons(panel.transform);
 
-        // Settings button
-        var settingsBtn = CreateButton(panel.transform, "SETTINGS", new Vector2(-200, -250));
+        var settingsBtn = CreateButton(panel.transform, "SETTINGS", new Vector2(-220, -260));
         settingsBtn.onClick.AddListener(OpenSettings);
 
-        // Prestige
-        var prestigeBtn = CreateButton(panel.transform, "PRESTIGE", new Vector2(200, -250));
+        var prestigeBtn = CreateButton(panel.transform, "PRESTIGE", new Vector2(200, -260));
         prestigeBtn.onClick.AddListener(() =>
         {
             if (GameManager.Instance != null && GameManager.Instance.CanPrestige())
-            {
                 GameManager.Instance.DoPrestige();
-                if (FloatingText.Instance != null)
-                    FloatingText.Instance.Show("PRESTIGE!", prestigeBtn.transform.position, Color.magenta);
-            }
             RefreshUI();
         });
 
@@ -157,10 +149,10 @@ public class UIBootstrap : MonoBehaviour
         {
             int index = i;
             var up = upgrades[i];
-            float y = 280 - i * 48;
+            float y = 300 - i * 46;
 
-            var btn = CreateButton(parent, up.Name, new Vector2(420, y));
-            btn.GetComponent<RectTransform>().sizeDelta = new Vector2(380, 42);
+            var btn = CreateButton(parent, up.Name, new Vector2(430, y));
+            btn.GetComponent<RectTransform>().sizeDelta = new Vector2(360, 40);
 
             var label = btn.GetComponentInChildren<TextMeshProUGUI>();
             upgradeTexts.Add(label);
@@ -179,27 +171,25 @@ public class UIBootstrap : MonoBehaviour
 
     private void CreateSettingsPanel()
     {
-        settingsPanel = CreatePanel("Settings", new Color(0.05f, 0.05f, 0.1f, 0.96f));
+        settingsPanel = CreatePanel("Settings", new Color(0.06f, 0.08f, 0.14f, 0.97f));
         settingsPanel.SetActive(false);
 
-        CreateText(settingsPanel.transform, "SETTINGS", 36, new Vector2(0, 200));
+        CreateText(settingsPanel.transform, "SETTINGS", 40, new Vector2(0, 210));
 
-        // Volume
-        CreateText(settingsPanel.transform, "Volume", 24, new Vector2(0, 80));
+        CreateText(settingsPanel.transform, "Volume", 26, new Vector2(0, 90));
         var sliderGO = new GameObject("VolumeSlider");
         sliderGO.transform.SetParent(settingsPanel.transform, false);
         volumeSlider = sliderGO.AddComponent<Slider>();
         var sliderRect = sliderGO.GetComponent<RectTransform>();
-        sliderRect.sizeDelta = new Vector2(300, 30);
-        sliderRect.anchoredPosition = new Vector2(0, 30);
+        sliderRect.sizeDelta = new Vector2(320, 28);
+        sliderRect.anchoredPosition = new Vector2(0, 40);
         volumeSlider.minValue = 0.0001f;
         volumeSlider.maxValue = 1f;
         volumeSlider.value = 0.75f;
         volumeSlider.onValueChanged.AddListener(SetVolume);
 
-        // Reset button
-        var resetBtn = CreateButton(settingsPanel.transform, "HOLD TO RESET", new Vector2(0, -60));
-        resetBtn.GetComponent<Image>().color = new Color(0.6f, 0.1f, 0.1f);
+        var resetBtn = CreateButton(settingsPanel.transform, "HOLD TO RESET", new Vector2(0, -50));
+        resetBtn.GetComponent<Image>().color = new Color(0.5f, 0.05f, 0.05f);
         resetButtonImage = resetBtn.GetComponent<Image>();
 
         var eventTrigger = resetBtn.gameObject.AddComponent<UnityEngine.EventSystems.EventTrigger>();
@@ -209,17 +199,22 @@ public class UIBootstrap : MonoBehaviour
         eventTrigger.triggers.Add(pointerDown);
 
         var pointerUp = new UnityEngine.EventSystems.EventTrigger.Entry { eventID = UnityEngine.EventSystems.EventTriggerType.PointerUp };
-        pointerUp.callback.AddListener((_) => { isHoldingReset = false; holdTimer = 0; if (holdProgressBar) holdProgressBar.fillAmount = 0; resetButtonImage.color = new Color(0.6f, 0.1f, 0.1f); });
+        pointerUp.callback.AddListener((_) =>
+        {
+            isHoldingReset = false;
+            holdTimer = 0;
+            if (holdProgressBar) holdProgressBar.fillAmount = 0;
+            resetButtonImage.color = new Color(0.5f, 0.05f, 0.05f);
+        });
         eventTrigger.triggers.Add(pointerUp);
 
-        // Progress bar
         var barBG = new GameObject("HoldBarBG");
         barBG.transform.SetParent(settingsPanel.transform, false);
         var bgImg = barBG.AddComponent<Image>();
-        bgImg.color = new Color(0.2f, 0.2f, 0.2f);
+        bgImg.color = new Color(0.15f, 0.15f, 0.15f);
         var bgRect = barBG.GetComponent<RectTransform>();
-        bgRect.sizeDelta = new Vector2(300, 16);
-        bgRect.anchoredPosition = new Vector2(0, -20);
+        bgRect.sizeDelta = new Vector2(320, 14);
+        bgRect.anchoredPosition = new Vector2(0, -10);
 
         var bar = new GameObject("HoldBar");
         bar.transform.SetParent(barBG.transform, false);
@@ -232,8 +227,7 @@ public class UIBootstrap : MonoBehaviour
         barRect.anchorMax = Vector2.one;
         barRect.sizeDelta = Vector2.zero;
 
-        // Close
-        var closeBtn = CreateButton(settingsPanel.transform, "CLOSE", new Vector2(0, -160));
+        var closeBtn = CreateButton(settingsPanel.transform, "CLOSE", new Vector2(0, -150));
         closeBtn.onClick.AddListener(CloseSettings);
     }
 
@@ -287,7 +281,7 @@ public class UIBootstrap : MonoBehaviour
         {
             var up = upgrades[i];
             string lockText = up.IsUnlocked ? "" : " [LOCKED]";
-            upgradeTexts[i].text = $"{up.Name} Lv.{up.CurrentLevel}\n{up.CurrentCost:F0}{lockText}";
+            upgradeTexts[i].text = $"{up.Name}  Lv.{up.CurrentLevel}\n{up.CurrentCost:F0}{lockText}";
         }
     }
 
@@ -309,10 +303,10 @@ public class UIBootstrap : MonoBehaviour
         var go = new GameObject(text + "Btn");
         go.transform.SetParent(parent, false);
         var img = go.AddComponent<Image>();
-        img.color = new Color(0.25f, 0.5f, 0.8f);
+        img.color = new Color(0.2f, 0.45f, 0.75f);
         var btn = go.AddComponent<Button>();
         var rect = go.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(200, 60);
+        rect.sizeDelta = new Vector2(200, 56);
         rect.anchoredPosition = pos;
 
         var t = new GameObject("Text");
@@ -322,7 +316,7 @@ public class UIBootstrap : MonoBehaviour
         tmp.fontSize = 18;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.white;
-        t.GetComponent<RectTransform>().sizeDelta = new Vector2(380, 50);
+        t.GetComponent<RectTransform>().sizeDelta = new Vector2(360, 50);
         return btn;
     }
 
@@ -336,7 +330,7 @@ public class UIBootstrap : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.white;
         var rect = go.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(500, 50);
+        rect.sizeDelta = new Vector2(520, 50);
         rect.anchoredPosition = pos;
         return tmp;
     }

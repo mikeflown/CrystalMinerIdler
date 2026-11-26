@@ -1,0 +1,4 @@
+[2026-11-26T06:26:18.701Z][INFO] Command-line: E:\\udww\\6000.6.9f1\\Editor\\Data\\Resources\\PackageManager\\Server\\UnityPackageManager.exe server -s 31132 --ipc-path Unity-Upm-31132 -l 2 --log-file E:\\PUnity\\CrystalMinerIdler/Logs/upm.log
+[2026-11-26T06:26:18.726Z][INFO] IPC server started (IPC path=Unity-Upm-31132).
+[2026-11-26T06:26:18.726Z][INFO] Hint: To connect to this UPM instance, launch Unity with the command-line parameter -upmIpcPath Upm-31132.
+[2026-11-26T06:26:28.837Z][INFO] Shutting down UnityPackageManager.exe: parent process [31132] is no longer running.
