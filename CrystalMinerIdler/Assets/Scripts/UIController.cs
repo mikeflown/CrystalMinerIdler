@@ -46,39 +46,58 @@ public class UIController : MonoBehaviour
             if (upgradeButtons[i] != null)
                 upgradeButtons[i].onClick.AddListener(() => OnUpgradeClick(index));
         }
-        if (resetButton != null)
-        {
-            var trigger = resetButton.gameObject.GetComponent<UnityEngine.EventSystems.EventTrigger>();
-            if (trigger == null)
-                trigger = resetButton.gameObject.AddComponent<UnityEngine.EventSystems.EventTrigger>();
-            trigger.triggers.Clear();
-            var down = new UnityEngine.EventSystems.EventTrigger.Entry { eventID = UnityEngine.EventSystems.EventTriggerType.PointerDown };
-            down.callback.AddListener(_ => { isHoldingReset = true; holdTimer = 0f; });
-            trigger.triggers.Add(down);
-            var up = new UnityEngine.EventSystems.EventTrigger.Entry { eventID = UnityEngine.EventSystems.EventTriggerType.PointerUp };
-            up.callback.AddListener(_ =>
-            {
-                isHoldingReset = false;
-                holdTimer = 0f;
-                if (holdProgressBar != null)
-                    holdProgressBar.fillAmount = 0f;
-            });
-            trigger.triggers.Add(up);
-        }
+        SetupResetHold();
         if (GameManager.Instance != null)
             GameManager.Instance.OnResourcesChanged += RefreshUI;
         RefreshUI();
     }
+    private void SetupResetHold()
+    {
+        if (resetButton == null) return;
+        var trigger = resetButton.gameObject.GetComponent<UnityEngine.EventSystems.EventTrigger>();
+        if (trigger == null)
+            trigger = resetButton.gameObject.AddComponent<UnityEngine.EventSystems.EventTrigger>();
+        trigger.triggers.Clear();
+        var down = new UnityEngine.EventSystems.EventTrigger.Entry
+        {
+            eventID = UnityEngine.EventSystems.EventTriggerType.PointerDown
+        };
+        down.callback.AddListener(_ =>
+        {
+            isHoldingReset = true;
+            holdTimer = 0f;
+            if (holdProgressBar != null)
+                holdProgressBar.fillAmount = 0f;
+        });
+        trigger.triggers.Add(down);
+        var up = new UnityEngine.EventSystems.EventTrigger.Entry
+        {
+            eventID = UnityEngine.EventSystems.EventTriggerType.PointerUp
+        };
+        up.callback.AddListener(_ =>
+        {
+            isHoldingReset = false;
+            holdTimer = 0f;
+            if (holdProgressBar != null)
+                holdProgressBar.fillAmount = 0f;
+            if (resetButtonImage != null)
+                resetButtonImage.color = new Color(0.5f, 0.05f, 0.05f);
+        });
+        trigger.triggers.Add(up);
+    }
     private void Update()
     {
-        if (!isHoldingReset || resetButtonImage == null) return;
+        if (!isHoldingReset) return;
         holdTimer += Time.unscaledDeltaTime;
         float t = Mathf.Clamp01(holdTimer / HoldDuration);
         if (holdProgressBar != null)
             holdProgressBar.fillAmount = t;
-        float pulse = Mathf.Lerp(1f, 5f, t);
-        float flash = Mathf.PingPong(Time.unscaledTime * pulse, 1f);
-        resetButtonImage.color = Color.Lerp(new Color(0.5f, 0.05f, 0.05f), Color.red, flash);
+        if (resetButtonImage != null)
+        {
+            float pulse = Mathf.Lerp(1f, 5f, t);
+            float flash = Mathf.PingPong(Time.unscaledTime * pulse, 1f);
+            resetButtonImage.color = Color.Lerp(new Color(0.5f, 0.05f, 0.05f), Color.red, flash);
+        }
         if (holdTimer >= HoldDuration)
         {
             isHoldingReset = false;
@@ -139,7 +158,6 @@ public class UIController : MonoBehaviour
     private void RefreshUI()
     {
         if (GameManager.Instance == null) return;
-
         if (crystalsText != null)
             crystalsText.text = $"Crystals: {GameManager.Instance.Crystals:F0}";
         if (cpsText != null)
