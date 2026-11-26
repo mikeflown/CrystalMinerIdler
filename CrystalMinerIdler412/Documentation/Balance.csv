@@ -1,0 +1,10 @@
+Upgrade,BaseCost,CostMult,Effect,MaxLevel,UnlockCondition,TimeEstimate
+Better Pickaxe,10,1.15,1,100,Always,30s
+Auto Miner,100,1.15,5,100,5 levels previous,2min
+Crystal Drill,1000,1.15,25,100,5 levels previous,4min
+Laser Cutter,5000,1.15,50,100,5 levels previous,7min
+Crystal Factory,25000,1.15,150,100,5 levels previous,10min
+Quantum Reactor,100000,1.15,400,100,5 levels previous,14min
+Dimension Portal,500000,1.15,1000,100,5 levels previous,18min
+Crystal Singularity,2000000,1.15,2500,100,5 levels previous,22min
+Prestige,1000000,N/A,+50% mult,Unlimited,1M crystals,~20min
